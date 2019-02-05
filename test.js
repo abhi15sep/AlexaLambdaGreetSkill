@@ -155,5 +155,117 @@ describe('All intents', function() {
 
     });
 
+    describe(`Test QuoteIntent`, function() {
+
+        before(function(done) {
+          event.request.intent = {};
+          event.session.attributes = {};
+          event.request.type = 'IntentRequest';
+          event.request.intent.name = 'QuoteIntent';
+          event.request.intent.slots = {};
+          ctx.done = done;
+          lambdaToTest.handler(event , ctx);
+        });
+
+       it('valid response', function() {
+         validRsp(ctx, {
+           endSession: false
+         });
+       });
+
+       it('valid outputSpeech', function() {
+        expect(ctx.speechResponse.response.outputSpeech.ssml).to.match(/Do you want/);
+       });
+
+       it('valid repromptSpeech', function() {
+        expect(ctx.speechResponse.response.reprompt.outputSpeech.ssml).to.match(/You can say/);
+       });
+
+    });
+
+    describe(`Test NextQuoteIntent correct invocation`, function() {
+
+        before(function(done) {
+          event.request.intent = {};
+          event.session.attributes = ctx.speechResponse.sessionAttributes;
+          event.request.type = 'IntentRequest';
+          event.request.intent.name = 'NextQuoteIntent';
+          event.request.intent.slots = {};
+          ctx.done = done;
+          lambdaToTest.handler(event , ctx);
+        });
+
+       it('valid response', function() {
+         validRsp(ctx, {
+           endSession: false
+         });
+       });
+
+       it('valid outputSpeech', function() {
+        expect(ctx.speechResponse.response.outputSpeech.ssml).to.match(/Do you want/);
+       });
+
+       it('valid repromptSpeech', function() {
+        expect(ctx.speechResponse.response.reprompt.outputSpeech.ssml).to.match(/You can say/);
+       });
+
+    });
+
+    describe(`Test NextQuoteIntent wrong invocation`, function() {
+
+        before(function(done) {
+          event.request.intent = {};
+          event.session.attributes = {};
+          event.request.type = 'IntentRequest';
+          event.request.intent.name = 'NextQuoteIntent';
+          event.request.intent.slots = {};
+          ctx.done = done;
+          lambdaToTest.handler(event , ctx);
+        });
+
+       it('valid response', function() {
+         validRsp(ctx, {
+           endSession: true
+         });
+       });
+
+       it('valid outputSpeech', function() {
+        expect(ctx.speechResponse.response.outputSpeech.ssml).to.match(/Wrong invocation/);
+       });
+
+       // it('valid repromptSpeech', function() {
+       //  expect(ctx.speechResponse.response.reprompt.outputSpeech.ssml).to.match(/you can say);
+       // });
+
+    });
+
+    describe(`Test AMAZON.StopIntent`, function() {
+
+        before(function(done) {
+          event.request.intent = {};
+          event.session.attributes = {};
+          event.request.type = 'IntentRequest';
+          event.request.intent.name = 'AMAZON.StopIntent';
+          event.request.intent.slots = {};
+          ctx.done = done;
+          lambdaToTest.handler(event , ctx);
+        });
+
+       it('valid response', function() {
+         validRsp(ctx, {
+           endSession: true
+         });
+       });
+
+       it('valid outputSpeech', function() {
+        expect(ctx.speechResponse.response.outputSpeech.ssml).to.match(/Good bye/);
+       });
+
+       // it('valid repromptSpeech', function() {
+       //  expect(ctx.speechResponse.response.reprompt.outputSpeech.ssml).to.match(/you can say);
+       // });
+
+    });
+
 
 });
